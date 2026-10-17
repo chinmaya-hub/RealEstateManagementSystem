@@ -1,0 +1,76 @@
+{% extends "properties/base.html" %}
+
+{% block title %}{{ page_title }} | EstateManager{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <div>
+        <p class="eyebrow">TEAM MANAGEMENT</p>
+        <h1>{{ page_title }}</h1>
+        <p class="muted">
+            Enter the agent's details in the form below.
+        </p>
+    </div>
+
+    <a class="button button-light" href="{% url 'agent_list' %}">
+        Back to Agents
+    </a>
+</section>
+
+<section class="panel">
+
+    <div class="section-heading">
+        <div>
+            <h2>Agent Information</h2>
+            <p class="muted">
+                Fields marked as required must be completed.
+            </p>
+        </div>
+    </div>
+
+    <form method="post" class="form-card">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="empty-state">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        {% for field in form %}
+        <div class="field">
+            <label for="{{ field.id_for_label }}">
+                {{ field.label }}
+            </label>
+
+            {{ field }}
+
+            {% if field.help_text %}
+            <small class="muted">
+                {{ field.help_text }}
+            </small>
+            {% endif %}
+
+            {% for error in field.errors %}
+            <p style="color: #dc2626;">
+                {{ error }}
+            </p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="button" type="submit">
+                {{ button_text }}
+            </button>
+
+            <a class="button button-light" href="{% url 'agent_list' %}">
+                Cancel
+            </a>
+        </div>
+    </form>
+
+</section>
+
+{% endblock %}

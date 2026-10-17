@@ -1,0 +1,132 @@
+{% extends "properties/base.html" %}
+
+{% block title %}{{ property.title }} | EstateManager{% endblock %}
+
+{% block content %}
+
+<p class="muted">
+    <a href="{% url 'property_list' %}">Properties</a>
+    / {{ property.title }}
+</p>
+
+<section class="detail-layout">
+
+    <div>
+
+        <article class="detail-card">
+
+            <div class="property-card-top">
+                <span class="badge">
+                    {{ property.get_status_display }}
+                </span>
+
+                <span class="property-type">
+                    {{ property.get_property_type_display }}
+                </span>
+            </div>
+
+            <!-- Property Image -->
+            {% if property.image %}
+            <div style="width: 100%; margin: 20px 0;">
+                <img src="{{ property.image.url }}" alt="{{ property.title }}" style="
+                            display: block;
+                            width: 100%;
+                            max-height: 420px;
+                            object-fit: cover;
+                            border-radius: 12px;
+                        ">
+            </div>
+            {% else %}
+            <div style="
+                    width: 100%;
+                    min-height: 220px;
+                    margin: 20px 0;
+                    border-radius: 12px;
+                    background: #f1f5f9;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #64748b;
+                    text-align: center;
+                    box-sizing: border-box;
+                    padding: 20px;
+                ">
+                <p>🏡 No property photo uploaded yet.</p>
+            </div>
+            {% endif %}
+
+            <h1>{{ property.title }}</h1>
+
+            <p class="muted">{{ property.location }}</p>
+
+            <p class="price">
+                ₹{{ property.price|floatformat:0 }}
+            </p>
+
+            <div class="property-meta">
+                <span>{{ property.bedrooms }} Bedrooms</span>
+                <span>{{ property.bathrooms }} Bathrooms</span>
+                <span>{{ property.area_sqft }} sq ft</span>
+            </div>
+
+            <h3>Description</h3>
+
+            <p class="detail-description">
+                {{ property.description }}
+            </p>
+
+        </article>
+
+        <article class="detail-card">
+
+            <h2>Request a Property Tour</h2>
+
+            <p class="muted">
+                Choose a future date and time for a property visit.
+            </p>
+
+            <form method="post" class="form-card">
+                {% csrf_token %}
+
+                <input type="hidden" name="form_type" value="tour">
+
+                {{ tour_form.as_p }}
+
+                <button class="button" type="submit">
+                    Request Tour
+                </button>
+            </form>
+
+        </article>
+
+    </div>
+
+    <aside>
+
+        <article class="detail-card">
+
+            <h2>Send an Inquiry</h2>
+
+            <p class="muted">
+                Ask a question about this property.
+            </p>
+
+            <form method="post" class="form-card">
+                {% csrf_token %}
+
+                <input type="hidden" name="form_type" value="inquiry">
+
+                {{ inquiry_form.as_p }}
+
+                <button class="button" type="submit">
+                    Submit Inquiry
+                </button>
+            </form>
+
+        </article>
+
+    </aside>
+
+</section>
+
+{% endblock %}

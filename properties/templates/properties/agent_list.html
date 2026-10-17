@@ -1,0 +1,97 @@
+{% extends "properties/base.html" %}
+
+{% block title %}Agents | EstateManager{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <div>
+        <p class="eyebrow">TEAM MANAGEMENT</p>
+        <h1>Agent Management</h1>
+        <p class="muted">
+            View and manage your registered real estate agents.
+        </p>
+    </div>
+
+    ```
+    <a class="button" href="{% url 'agent_create' %}">
+        + Add Agent
+    </a>
+    ```
+
+</section>
+
+<section class="panel">
+
+    ```
+    <div class="section-heading">
+        <div>
+            <h2>Registered Agents</h2>
+            <p class="muted">
+                Total agents: {{ agents|length }}
+            </p>
+        </div>
+    </div>
+
+    {% for agent in agents %}
+
+    <div class="record-row">
+
+        <div>
+            <strong>{{ agent.full_name }}</strong>
+
+            <p class="muted">
+                {{ agent.email }}
+            </p>
+
+            <p class="muted">
+                Phone: {{ agent.phone }}
+            </p>
+
+            {% if agent.agency_name %}
+            <p class="muted">
+                Agency: {{ agent.agency_name }}
+            </p>
+            {% endif %}
+
+            {% if agent.license_number %}
+            <p class="muted">
+                License: {{ agent.license_number }}
+            </p>
+            {% endif %}
+        </div>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+
+            <a class="button button-light" href="{% url 'agent_edit' agent.pk %}">
+                Edit
+            </a>
+
+            <a class="button" href="{% url 'agent_delete' agent.pk %}" style="background: #dc2626;">
+                Delete
+            </a>
+
+        </div>
+
+    </div>
+
+    {% empty %}
+
+    <div class="empty-state">
+        <h3>No Agents Found</h3>
+
+        <p>
+            No agents have been registered yet. Add your first agent.
+        </p>
+
+        <a class="button" href="{% url 'agent_create' %}">
+            + Add First Agent
+        </a>
+    </div>
+
+    {% endfor %}
+    ```
+
+</section>
+
+{% endblock %}

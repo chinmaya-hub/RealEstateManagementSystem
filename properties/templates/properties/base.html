@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    ```
+    <title>{% block title %}EstateManager{% endblock %}</title>
+
+    <style>
+        :root {
+            --navy: #172b45;
+            --green: #16836e;
+            --green-dark: #106a59;
+            --background: #f4f7fb;
+            --white: #ffffff;
+            --text: #1b2b42;
+            --muted: #718096;
+            --border: #e3eaf2;
+            --success: #e2f7ed;
+            --danger: #fff0f0;
+            --shadow: 0 10px 30px rgba(23, 43, 69, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+        }
+
+        a {
+            color: var(--green);
+            text-decoration: none;
+        }
+
+        .navbar {
+            background: var(--navy);
+            color: white;
+            padding: 18px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .brand {
+            color: white;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .brand span {
+            color: #78d9bd;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 22px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #edf3fb;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            color: #8ce6c9;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1250px;
+            margin: 32px auto;
+            min-height: 65vh;
+        }
+
+        .welcome {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .welcome h1 {
+            margin: 3px 0 8px;
+            font-size: clamp(27px, 4vw, 36px);
+            line-height: 1.2;
+        }
+
+        .eyebrow {
+            color: var(--green);
+            letter-spacing: 1.5px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .muted {
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .button {
+            display: inline-block;
+            border: 0;
+            border-radius: 9px;
+            padding: 12px 18px;
+            color: white;
+            background: var(--green);
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .button:hover {
+            background: var(--green-dark);
+            color: white;
+        }
+
+        .button-light {
+            background: #e7f5f0;
+            color: var(--green-dark);
+        }
+
+        .button-light:hover {
+            background: #d4eee5;
+            color: var(--green-dark);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-label {
+            display: block;
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card strong {
+            display: block;
+            font-size: 31px;
+            line-height: 1.2;
+            color: var(--navy);
+        }
+
+        .stat-card small {
+            display: block;
+            color: var(--muted);
+            margin-top: 9px;
+        }
+
+        .panel {
+            background: var(--white);
+            padding: 25px;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .section-heading p {
+            margin: 3px 0 0;
+            font-size: 13px;
+        }
+
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .property-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            background: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-width: 0;
+        }
+
+        .property-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .property-card h3 {
+            font-size: 19px;
+            margin: 15px 0 3px;
+            overflow-wrap: anywhere;
+        }
+
+        .property-card .muted {
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .property-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .property-type {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--green);
+            margin: 15px 0;
+        }
+
+        .property-meta {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            background: var(--success);
+            color: #176b4f;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .text-link {
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .property-card .text-link {
+            display: inline-block;
+            margin-top: 18px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .analytics-row,
+        .record-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
+        }
+
+        .analytics-row:last-child,
+        .record-row:last-child {
+            border-bottom: 0;
+        }
+
+        .analytics-row strong {
+            color: var(--green);
+        }
+
+        .record-row p {
+            margin-bottom: 0;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            border: 1px dashed #cbd6e2;
+            background: #fbfcfe;
+            padding: 32px;
+            text-align: center;
+            border-radius: 12px;
+        }
+
+        .filter-form {
+            display: flex;
+            align-items: end;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-form .field {
+            flex: 1 1 180px;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d5deea;
+            border-radius: 8px;
+            background: white;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-card {
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .form-card h3 {
+            margin-top: 0;
+        }
+
+        .form-card p {
+            margin: 0 0 13px;
+        }
+
+        .form-card p label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .errorlist {
+            color: #b52f3b;
+            font-size: 13px;
+        }
+
+        .messages {
+            margin-bottom: 18px;
+        }
+
+        .message {
+            padding: 13px 16px;
+            border-radius: 9px;
+            margin-bottom: 9px;
+            background: var(--success);
+            color: #176b4f;
+        }
+
+        .message.error {
+            background: var(--danger);
+            color: #a52e38;
+        }
+
+        .detail-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+            gap: 22px;
+        }
+
+        .detail-card {
+            padding: 28px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            margin-bottom: 22px;
+        }
+
+        .detail-card h1 {
+            line-height: 1.2;
+            overflow-wrap: anywhere;
+        }
+
+        .detail-description {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .footer {
+            background: var(--navy);
+            color: #d9e3ef;
+            text-align: center;
+            padding: 24px;
+            margin-top: 45px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+
+            .stats-grid,
+            .property-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .detail-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 93%;
+                margin-top: 22px;
+            }
+
+            .navbar {
+                padding: 17px 5%;
+            }
+
+            .nav-links {
+                gap: 14px;
+            }
+
+            .stats-grid,
+            .property-grid,
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+            .panel,
+            .detail-card {
+                padding: 18px;
+            }
+
+            .welcome h1 {
+                font-size: 27px;
+            }
+        }
+    </style>
+    ```
+
+</head>
+
+<body>
+
+    ```
+    <header class="navbar">
+        <a class="brand" href="{% url 'dashboard' %}">
+            Estate<span>Manager</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'property_list' %}">Properties</a>
+
+            {% if request.user.is_authenticated and request.user.is_staff %}
+            <a href="{% url 'agent_list' %}">Agents</a>
+            <a href="{% url 'client_list' %}">Clients</a>
+            {% endif %}
+
+            <a href="{% url 'admin:index' %}">Admin Panel</a>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {% if message.tags == 'error' %}error{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+
+    </main>
+
+    <footer class="footer">
+        Real Estate Management System · Django & MySQL
+    </footer>
+    ```
+
+</body>
+
+</html>

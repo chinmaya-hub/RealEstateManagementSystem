@@ -1,0 +1,447 @@
+{% extends "properties/base.html" %}
+
+{% block title %}Dashboard | EstateManager{% endblock %}
+
+{% block content %}
+
+<section class="welcome">
+    <div>
+        <p class="eyebrow">REAL ESTATE MANAGEMENT</p>
+        <h1>Overview Dashboard</h1>
+        <p class="muted">
+            Manage properties, agents, clients, inquiries and tours.
+        </p>
+    </div>
+
+    <a class="button" href="{% url 'property_list' %}">
+        Browse Properties
+    </a>
+</section>
+
+
+<!-- Dashboard Statistics -->
+<section class="stats-grid">
+
+    <article class="stat-card">
+        <span class="stat-label">Total Properties</span>
+        <strong>{{ total_properties }}</strong>
+        <small>All listed properties</small>
+    </article>
+
+    <article class="stat-card">
+        <span class="stat-label">Available Properties</span>
+        <strong>{{ available_properties }}</strong>
+        <small>Currently available</small>
+    </article>
+
+    <article class="stat-card">
+        <span class="stat-label">Agents</span>
+        <strong>{{ total_agents }}</strong>
+        <small>Registered agents</small>
+    </article>
+
+    <article class="stat-card">
+        <span class="stat-label">Clients</span>
+        <strong>{{ total_clients }}</strong>
+        <small>Registered clients</small>
+    </article>
+
+    <article class="stat-card">
+        <span class="stat-label">New Inquiries</span>
+        <strong>{{ new_inquiries }}</strong>
+        <small>Awaiting follow-up</small>
+    </article>
+
+    <article class="stat-card">
+        <span class="stat-label">Scheduled Tours</span>
+        <strong>{{ scheduled_tours }}</strong>
+        <small>Upcoming property visits</small>
+    </article>
+
+</section>
+
+
+<!-- Recent Properties -->
+<section class="panel">
+
+    <div class="section-heading">
+        <div>
+            <h2>Recent Properties</h2>
+            <p class="muted">Recently added listings</p>
+        </div>
+
+        <a class="button button-light" href="{% url 'property_list' %}">
+            View All
+        </a>
+    </div>
+
+    <div class="property-grid">
+
+        {% for property in recent_properties %}
+
+        <article class="property-card">
+
+            {% if property.image %}
+            <img src="{{ property.image.url }}" alt="{{ property.title }}" loading="lazy" style="
+                    display: block;
+                    width: 100%;
+                    height: 200px;
+                    object-fit: cover;
+                    border-radius: 12px;
+                    margin-bottom: 16px;
+                ">
+            {% else %}
+            <div style="
+                display: flex;
+                width: 100%;
+                height: 200px;
+                align-items: center;
+                justify-content: center;
+                background: #f1f5f9;
+                color: #64748b;
+                border-radius: 12px;
+                margin-bottom: 16px;
+                box-sizing: border-box;
+            ">
+                <span>🏡 No Photo Available</span>
+            </div>
+            {% endif %}
+
+            <div class="property-card-top">
+                <span class="badge">
+                    {{ property.get_status_display }}
+                </span>
+
+                <span class="property-type">
+                    {{ property.get_property_type_display }}
+                </span>
+            </div>
+
+            <h3>{{ property.title }}</h3>
+
+            <p class="muted">{{ property.location }}</p>
+
+            <p class="price">
+                ₹{{ property.price|floatformat:0 }}
+            </p>
+
+            <div class="property-meta">
+                <span>{{ property.bedrooms }} Bedrooms</span>
+                <span>{{ property.bathrooms }} Bathrooms</span>
+                <span>{{ property.area_sqft }} sq ft</span>
+            </div>
+
+            <a class="text-link" href="{% url 'property_detail' property.pk %}">
+                View Details →
+            </a>
+
+        </article>
+
+        {% empty %}
+
+        <div class="empty-state">
+            <h3>No properties added yet</h3>
+            <p>Add your first property through the Admin Panel.</p>
+
+            <a class="button" href="{% url 'admin:properties_property_add' %}">
+                Add Property
+            </a>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- Analytics Charts -->
+<section class="two-column">
+
+    <!-- Property Type Chart -->
+    <article class="panel">
+
+        <div class="section-heading">
+            <div>
+                <h2>Properties by Type</h2>
+                <p class="muted">Portfolio breakdown</p>
+            </div>
+        </div>
+
+        <div style="position: relative; width: 100%; height: 280px;">
+            <canvas id="propertyTypeChart"></canvas>
+        </div>
+
+        <div style="margin-top: 20px;">
+
+            {% for item in property_type_stats %}
+            <div class="analytics-row">
+                <span>{{ item.label }}</span>
+                <strong>{{ item.count }}</strong>
+            </div>
+            {% empty %}
+            <p class="muted">No property type data available.</p>
+            {% endfor %}
+
+        </div>
+
+    </article>
+
+
+    <!-- Property Status Chart -->
+    <article class="panel">
+
+        <div class="section-heading">
+            <div>
+                <h2>Properties by Status</h2>
+                <p class="muted">Current listing status</p>
+            </div>
+        </div>
+
+        <div style="position: relative; width: 100%; height: 280px;">
+            <canvas id="propertyStatusChart"></canvas>
+        </div>
+
+        <div style="margin-top: 20px;">
+
+            {% for item in status_stats %}
+            <div class="analytics-row">
+                <span>{{ item.label }}</span>
+                <strong>{{ item.count }}</strong>
+            </div>
+            {% empty %}
+            <p class="muted">No property status data available.</p>
+            {% endfor %}
+
+        </div>
+
+    </article>
+
+</section>
+
+
+<!-- Chart Data: Django renders these values into HTML -->
+<div id="property-type-data" hidden>
+    {% for item in property_type_stats %}
+    <span data-label="{{ item.label }}" data-count="{{ item.count }}"></span>
+    {% endfor %}
+</div>
+
+<div id="property-status-data" hidden>
+    {% for item in status_stats %}
+    <span data-label="{{ item.label }}" data-count="{{ item.count }}"></span>
+    {% endfor %}
+</div>
+
+
+<!-- Recent Inquiries -->
+<section class="panel">
+
+    <div class="section-heading">
+        <div>
+            <h2>Recent Inquiries</h2>
+            <p class="muted">Latest customer requests</p>
+        </div>
+
+        <a class="text-link" href="{% url 'admin:properties_propertyinquiry_changelist' %}">
+            Manage Inquiries →
+        </a>
+    </div>
+
+    {% for inquiry in recent_inquiries %}
+
+    <div class="record-row">
+        <div>
+            <strong>{{ inquiry.client_name }}</strong>
+            <p class="muted">
+                {{ inquiry.property.title }} · {{ inquiry.email }}
+            </p>
+        </div>
+
+        <span class="badge">
+            {{ inquiry.get_status_display }}
+        </span>
+    </div>
+
+    {% empty %}
+
+    <p class="muted">No inquiries have been received yet.</p>
+
+    {% endfor %}
+
+</section>
+
+
+<!-- Upcoming Property Tours -->
+<section class="panel">
+
+    <div class="section-heading">
+        <div>
+            <h2>Upcoming Property Tours</h2>
+            <p class="muted">Scheduled customer visits</p>
+        </div>
+
+        <a class="text-link" href="{% url 'admin:properties_propertytour_changelist' %}">
+            Manage Tours →
+        </a>
+    </div>
+
+    {% for tour in upcoming_tours %}
+
+    <div class="record-row">
+        <div>
+            <strong>{{ tour.client_name }}</strong>
+            <p class="muted">
+                {{ tour.property.title }} ·
+                {{ tour.scheduled_at|date:"d M Y, h:i A" }}
+            </p>
+        </div>
+
+        <span class="badge">
+            {{ tour.get_status_display }}
+        </span>
+    </div>
+
+    {% empty %}
+
+    <p class="muted">No upcoming tours are scheduled.</p>
+
+    {% endfor %}
+
+</section>
+
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        function readChartData(containerId) {
+            const container = document.getElementById(containerId);
+
+            if (!container) {
+                return { labels: [], counts: [] };
+            }
+
+            const rows = container.querySelectorAll("span");
+
+            const labels = [];
+            const counts = [];
+
+            rows.forEach(function (row) {
+                labels.push(row.dataset.label || "");
+                counts.push(Number(row.dataset.count || 0));
+            });
+
+            return {
+                labels: labels,
+                counts: counts
+            };
+        }
+
+
+        const typeData = readChartData("property-type-data");
+        const statusData = readChartData("property-status-data");
+
+
+        if (typeof Chart === "undefined") {
+            console.warn(
+                "Chart.js could not load. Check your internet connection."
+            );
+            return;
+        }
+
+
+        // Property Type Doughnut Chart
+        const typeCanvas = document.getElementById("propertyTypeChart");
+
+        if (typeCanvas && typeData.labels.length > 0) {
+            new Chart(typeCanvas, {
+                type: "doughnut",
+
+                data: {
+                    labels: typeData.labels,
+
+                    datasets: [{
+                        label: "Properties",
+                        data: typeData.counts,
+
+                        backgroundColor: [
+                            "#2563eb",
+                            "#14b8a6",
+                            "#f59e0b",
+                            "#8b5cf6"
+                        ],
+
+                        borderWidth: 2,
+                        borderColor: "#ffffff"
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    plugins: {
+                        legend: {
+                            position: "bottom"
+                        }
+                    }
+                }
+            });
+        }
+
+
+        // Property Status Bar Chart
+        const statusCanvas = document.getElementById("propertyStatusChart");
+
+        if (statusCanvas && statusData.labels.length > 0) {
+            new Chart(statusCanvas, {
+                type: "bar",
+
+                data: {
+                    labels: statusData.labels,
+
+                    datasets: [{
+                        label: "Number of Properties",
+                        data: statusData.counts,
+
+                        backgroundColor: [
+                            "#10b981",
+                            "#ef4444",
+                            "#f59e0b"
+                        ],
+
+                        borderRadius: 6,
+                        maxBarThickness: 65
+                    }]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    },
+
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+    });
+</script>
+
+{% endblock %}
